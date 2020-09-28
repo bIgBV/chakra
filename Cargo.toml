@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "chakra",
+    "chakra-sys"
+]
