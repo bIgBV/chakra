@@ -6,6 +6,9 @@ use std::{
 };
 
 fn main() {
+    println!("cargo:rustc-link-lib=uring");
+    println!("cargo:rustc-link-search=build");
+
     let working_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap())
         .canonicalize()
         .unwrap();
@@ -28,6 +31,7 @@ fn main() {
     println!();
 
     let source_dir = liburing.join("src");
+    let output_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
 
     cc::Build::new()
         .file(source_dir.join("setup.c"))
@@ -37,6 +41,6 @@ fn main() {
         .include(build_dir.join("config_host.h"))
         .include(source_dir.join("include"))
         .flag("-g")
-        .out_dir(env::var("CARGO_MANIFEST_DIR").unwrap())
+        .out_dir(output_dir.join("build"))
         .compile("uring");
 }
