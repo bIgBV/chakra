@@ -1,4 +1,9 @@
-use std::{env, path::PathBuf, process::Command};
+use std::{
+    env,
+    io::{stdout, Write},
+    path::PathBuf,
+    process::Command,
+};
 
 fn main() {
     let working_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap())
@@ -7,12 +12,20 @@ fn main() {
     let liburing = working_dir.join("liburing");
 
     let build_dir = liburing.join("build");
+    let build_arg = format!("--prefix={}", build_dir.to_str().unwrap());
+
     // Run the configure script to get the `config_host.h` file.
-    Command::new("./configure")
-        .args(&["--prefix", build_dir.to_str().unwrap()])
+    let output = Command::new("./configure")
+        .args(&[&build_arg])
         .current_dir(liburing.clone())
         .output()
         .expect("configure script failed.");
+
+    stdout()
+        .lock()
+        .write_all(&output.stdout)
+        .expect("Unable to write process output to stdout");
+    println!();
 
     let source_dir = liburing.join("src");
 
