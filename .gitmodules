@@ -1,6 +1,3 @@
-[submodule "liburing"]
-	path = liburing
-	url = git@github.com:axboe/liburing.git
 [submodule "chakra-sys/liburing"]
 	path = chakra-sys/liburing
 	url = git@github.com:axboe/liburing.git
