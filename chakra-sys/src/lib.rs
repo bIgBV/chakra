@@ -1,5 +1,48 @@
 #[repr(C)]
-pub struct io_uring;
+pub struct io_uring {
+    pub io_uring_sq: io_uring_sq,
+    pub io_uring_cq: io_uring_cq,
+    pub flags: libc::c_uint,
+    pub ring_fd: libc::c_int,
+
+    pub pad: [libc::c_uint; 4],
+}
+
+#[repr(C)]
+pub struct io_uring_sq {
+    pub khead: *mut libc::c_uint,
+    pub ktail: *mut libc::c_uint,
+    pub kring_mask: *mut libc::c_uint,
+    pub kring_entries: *mut libc::c_uint,
+    pub kflags: *mut libc::c_uint,
+    pub kdropped: *mut libc::c_uint,
+    pub array: *mut libc::c_uint,
+    pub io_uring_sqe: *mut io_uring_sqe,
+
+    pub sqe_head: *mut libc::c_uint,
+    pub sqe_tail: *mut libc::c_uint,
+
+    pub ring_sz: libc::size_t,
+    pub ring_ptr: *mut libc::c_void,
+
+    pub pad: [libc::c_uint; 4],
+}
+
+#[repr(C)]
+pub struct io_uring_cq {
+    pub khead: *mut libc::c_uint,
+    pub ktail: *mut libc::c_uint,
+    pub kring_mask: *mut libc::c_uint,
+    pub kring_entries: *mut libc::c_uint,
+    pub kflags: *mut libc::c_uint,
+    pub koverflow: *mut libc::c_uint,
+    pub io_uring_cqe: *mut io_uring_cqe,
+
+    pub ring_sz: libc::size_t,
+    pub ring_ptr: *mut libc::c_void,
+
+    pub pad: [libc::c_uint; 4],
+}
 
 #[repr(C)]
 pub struct io_uring_sqe {
@@ -20,20 +63,19 @@ pub struct io_uring_sqe {
     pub cmd_flags: cmd_flags,
     /// Userdata which is copied from SQE into CQE
     pub user_data: libc::__u64,
-    pub buf_index_padding: buf_index_padding
+    pub buf_index_padding: buf_index_padding,
 }
-
 
 #[repr(C)]
 pub union file_off {
     pub off: libc::__u64,
-    pub addr2: libc::__u64
+    pub addr2: libc::__u64,
 }
 
 #[repr(C)]
 pub union add_off {
     pub addr: libc::__u64,
-    pub splice_off_in: libc::__u64
+    pub splice_off_in: libc::__u64,
 }
 
 #[repr(C)]
@@ -67,7 +109,7 @@ pub union buf_index_padding {
 pub struct personality {
     pub buf_or_group: libc::__u16,
     pub personality: libc::__u16,
-    pub splice_fd_in: libc::__s32
+    pub splice_fd_in: libc::__s32,
 }
 
 // sqe->flags
@@ -83,7 +125,6 @@ pub const IOSQE_IO_HARDLINK: libc::__u8 = 1 << 3;
 pub const IOSQE_ASYNC: libc::__u8 = 1 << 4;
 /// select buffer from sqe->buf_group
 pub const IOSQE_BUFFER_SELECT: libc::__u8 = 1 << 5;
-
 
 // io_uring_setup flags
 /// io_context is polled
@@ -106,44 +147,44 @@ pub const IORING_SETUP_R_DISABLED: libc::__u8 = 1 << 6;
 #[allow(nonstandard_style)]
 #[derive(Debug)]
 pub enum IoUringOp {
-	IORING_OP_NOP,
-	IORING_OP_READV,
-	IORING_OP_WRITEV,
-	IORING_OP_FSYNC,
-	IORING_OP_READ_FIXED,
-	IORING_OP_WRITE_FIXED,
-	IORING_OP_POLL_ADD,
-	IORING_OP_POLL_REMOVE,
-	IORING_OP_SYNC_FILE_RANGE,
-	IORING_OP_SENDMSG,
-	IORING_OP_RECVMSG,
-	IORING_OP_TIMEOUT,
-	IORING_OP_TIMEOUT_REMOVE,
-	IORING_OP_ACCEPT,
-	IORING_OP_ASYNC_CANCEL,
-	IORING_OP_LINK_TIMEOUT,
-	IORING_OP_CONNECT,
-	IORING_OP_FALLOCATE,
-	IORING_OP_OPENAT,
-	IORING_OP_CLOSE,
-	IORING_OP_FILES_UPDATE,
-	IORING_OP_STATX,
-	IORING_OP_READ,
-	IORING_OP_WRITE,
-	IORING_OP_FADVISE,
-	IORING_OP_MADVISE,
-	IORING_OP_SEND,
-	IORING_OP_RECV,
-	IORING_OP_OPENAT2,
-	IORING_OP_EPOLL_CTL,
-	IORING_OP_SPLICE,
-	IORING_OP_PROVIDE_BUFFERS,
-	IORING_OP_REMOVE_BUFFERS,
-	IORING_OP_TEE,
-	IORING_OP_SHUTDOWN,
+    IORING_OP_NOP,
+    IORING_OP_READV,
+    IORING_OP_WRITEV,
+    IORING_OP_FSYNC,
+    IORING_OP_READ_FIXED,
+    IORING_OP_WRITE_FIXED,
+    IORING_OP_POLL_ADD,
+    IORING_OP_POLL_REMOVE,
+    IORING_OP_SYNC_FILE_RANGE,
+    IORING_OP_SENDMSG,
+    IORING_OP_RECVMSG,
+    IORING_OP_TIMEOUT,
+    IORING_OP_TIMEOUT_REMOVE,
+    IORING_OP_ACCEPT,
+    IORING_OP_ASYNC_CANCEL,
+    IORING_OP_LINK_TIMEOUT,
+    IORING_OP_CONNECT,
+    IORING_OP_FALLOCATE,
+    IORING_OP_OPENAT,
+    IORING_OP_CLOSE,
+    IORING_OP_FILES_UPDATE,
+    IORING_OP_STATX,
+    IORING_OP_READ,
+    IORING_OP_WRITE,
+    IORING_OP_FADVISE,
+    IORING_OP_MADVISE,
+    IORING_OP_SEND,
+    IORING_OP_RECV,
+    IORING_OP_OPENAT2,
+    IORING_OP_EPOLL_CTL,
+    IORING_OP_SPLICE,
+    IORING_OP_PROVIDE_BUFFERS,
+    IORING_OP_REMOVE_BUFFERS,
+    IORING_OP_TEE,
+    IORING_OP_SHUTDOWN,
 
-	/* this goes last, obviously */
-	IORING_OP_LAST,
+    /* this goes last, obviously */
+    IORING_OP_LAST,
 }
 
 /// sqe->fsync_flags
@@ -161,7 +202,7 @@ pub const SPLICE_F_FD_IN_FIXED: libc::__u32 = 1 << 31;
 pub struct io_uring_cqe {
     user_data: libc::__u64,
     res: libc::__s32,
-    flags: libc::__u32
+    flags: libc::__u32,
 }
 
 /// cqe->flags
@@ -233,7 +274,7 @@ pub struct io_uring_params {
     pub wq_fd: libc::__u32,
     pub resv: [libc::__u32; 3],
     pub sq_off: io_sqring_offsets,
-    pub cq_off: io_cqring_offsets
+    pub cq_off: io_cqring_offsets,
 }
 
 // io_uring_params->features flags
@@ -307,21 +348,28 @@ pub const IORING_RESTRICTION_SQE_FLAGS_ALLOWED: libc::c_uint = 2;
 // Require sqe flags (these flags must be set on each submission)
 pub const IORING_RESTRICTION_SQE_FLAGS_REQUIRED: libc::c_uint = 3;
 
-
 #[link(name = "uring")]
 extern "C" {
-    pub fn io_uring_queue_init(entries: libc::c_uint, ring: *mut io_uring, flags: libc::c_uint) -> libc::c_uint;
+    pub fn io_uring_queue_init(
+        entries: libc::c_uint,
+        ring: *mut io_uring,
+        flags: libc::c_uint,
+    ) -> libc::c_uint;
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::mem::MaybeUninit;
 
     #[test]
     fn it_works() {
-        let mut ring = io_uring;
+        let mut ring = MaybeUninit::uninit();
+
         unsafe {
-            io_uring_queue_init(256, &mut ring as *mut _, 0);
+            let ret = io_uring_queue_init(256, ring.as_mut_ptr(), 0);
+
+            assert_eq!(ret, 0);
         }
     }
 }
