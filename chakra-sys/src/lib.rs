@@ -1,3 +1,5 @@
+use std::os::raw::c_int;
+
 #[repr(C)]
 pub struct io_uring {
     pub io_uring_sq: io_uring_sq,
@@ -354,7 +356,17 @@ extern "C" {
         entries: libc::c_uint,
         ring: *mut io_uring,
         flags: libc::c_uint,
-    ) -> libc::c_uint;
+    ) -> libc::c_int;
+
+    pub fn io_uring_get_sqe(ring: *mut io_uring) -> *mut io_uring_sqe;
+
+    pub fn io_uring_prep_readv(
+        sqe: *const io_uring_sqe,
+        fd: libc::c_int,
+        iovecs: *const libc::iovec,
+        nr_vecs: libc::c_int,
+        offset: libc::off_t,
+    );
 }
 
 #[cfg(test)]
