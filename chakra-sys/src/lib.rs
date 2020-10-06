@@ -358,6 +358,12 @@ extern "C" {
         flags: libc::c_uint,
     ) -> libc::c_int;
 
+    pub fn io_uring_queue_init_params(
+        entries: libc::c_uint,
+        ring: *mut io_uring,
+        params: *mut io_uring_params,
+    ) -> libc::c_int;
+
     pub fn io_uring_get_sqe(ring: *mut io_uring) -> *mut io_uring_sqe;
 
     pub fn io_uring_prep_readv(

@@ -12,3 +12,4 @@ path = "src/lib.rs"
 
 [dependencies]
 chakra-sys = { path = "../chakra-sys" }
+bitflags = "1.2"
