@@ -1,4 +1,4 @@
-#[cfg(target_os = "unix")]
-mod sqe;
-#[cfg(target_os = "unix")]
 mod ring;
+mod sqe;
+pub use ring::*;
+pub use sqe::*;

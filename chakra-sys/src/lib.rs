@@ -1,5 +1,3 @@
-use std::os::raw::c_int;
-
 #[repr(C)]
 pub struct io_uring {
     pub io_uring_sq: io_uring_sq,
@@ -219,7 +217,7 @@ pub const IORING_OFF_SQES: libc::__u64 = 0x10000000;
 
 // Filled with the offset for mmap(2)
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct io_sqring_offsets {
     pub head: libc::__u32,
     pub tail: libc::__u32,
@@ -240,7 +238,7 @@ pub const IORING_SQ_CQ_OVERFLOW: libc::c_uint = 1 << 1;
 
 // cq_ring->flags
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct io_cqring_offsets {
     pub head: libc::__u32,
     pub tail: libc::__u32,
@@ -265,7 +263,7 @@ pub const IORING_ENTER_SQ_WAIT: libc::c_uint = 1 << 2;
 /// Parameters passed in for io_uring_setup(2). Copied back with updated info
 /// on success
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct io_uring_params {
     pub sq_entries: libc::__u32,
     pub cq_entries: libc::__u32,
